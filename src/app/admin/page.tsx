@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import {
   RefreshCw, AlertTriangle, Pencil, X, Minus, Plus,
   Users, Trophy, Calendar, CheckCircle2, Activity,
-  ShieldCheck, ShieldOff, UserX, UserCheck,
+  ShieldCheck, ShieldOff, UserX, UserCheck, Banknote,
 } from 'lucide-react';
 import { formatMatchDate } from '@/lib/utils';
 import Image from 'next/image';
@@ -36,6 +36,7 @@ interface AdminUser {
   email: string;
   role: 'user' | 'admin';
   active: boolean;
+  paid: boolean;
   totalPoints: number;
   exactScores: number;
   correctWinners: number;
@@ -199,6 +200,19 @@ export default function AdminPage() {
       api.get('/admin/stats').then(r => setStats(r.data)).catch(() => {});
     } catch {
       toast('Erro ao salvar placar', 'error');
+    }
+  };
+
+  const handleTogglePaid = async (user: AdminUser) => {
+    setTogglingUser(user._id + '-paid');
+    try {
+      await api.patch(`/admin/users/${user._id}/paid`, { paid: !user.paid });
+      setUsers(prev => prev.map(u => u._id === user._id ? { ...u, paid: !u.paid } : u));
+      toast(`Usuário marcado como ${user.paid ? 'não pagante' : 'pagante'}!`, 'success');
+    } catch {
+      toast('Erro ao alterar pagamento', 'error');
+    } finally {
+      setTogglingUser(null);
     }
   };
 
@@ -441,8 +455,11 @@ export default function AdminPage() {
                           <span className="text-sm font-bold text-[#00a651]">{user.name.charAt(0).toUpperCase()}</span>
                         </div>
                         <div className="min-w-0">
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span className="text-sm font-medium text-[#d4edda] truncate">{user.name}</span>
+                            {user.paid && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#00a651]/20 text-[#00a651] font-medium shrink-0">pagante</span>
+                            )}
                             {user.role === 'admin' && (
                               <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#f5c518]/20 text-[#f5c518] font-medium shrink-0">admin</span>
                             )}
@@ -472,6 +489,17 @@ export default function AdminPage() {
 
                       {/* Actions */}
                       <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          title={user.paid ? 'Remover pagante' : 'Marcar como pagante'}
+                          disabled={togglingUser === user._id + '-paid'}
+                          onClick={() => handleTogglePaid(user)}
+                          className={`p-1.5 rounded-lg transition-colors disabled:opacity-50 ${
+                            user.paid
+                              ? 'bg-[#00a651]/20 text-[#00a651] hover:bg-[#00a651]/30'
+                              : 'bg-[#162016] text-[#7a9b7a] hover:text-[#00a651] hover:bg-[#1e2e1e]'
+                          }`}>
+                          <Banknote size={14} />
+                        </button>
                         <button
                           title={user.role === 'admin' ? 'Rebaixar para usuário' : 'Promover a admin'}
                           disabled={togglingUser === user._id + '-role'}

@@ -14,19 +14,23 @@ export default function DashboardPage() {
   const { user } = useAuthStore();
   const { bets, fetchMyBets, getBetForMatch, fetchParticipants, getParticipants } = useBetsStore();
   const [matches, setMatches] = useState<any[]>([]);
-  const [ranking, setRanking] = useState<any[]>([]);
+  const [rankingPaid, setRankingPaid] = useState<any[]>([]);
+  const [rankingAll, setRankingAll] = useState<any[]>([]);
+  const [rankingTab, setRankingTab] = useState<'paid' | 'all'>('paid');
   const [selectedMatch, setSelectedMatch] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     Promise.all([
       api.get('/matches/upcoming').then((r) => setMatches(r.data)),
-      api.get('/rankings').then((r) => setRanking(r.data)),
+      api.get('/rankings/paid').then((r) => setRankingPaid(r.data)),
+      api.get('/rankings').then((r) => setRankingAll(r.data)),
       fetchMyBets(),
       fetchParticipants(),
     ]).finally(() => setLoading(false));
   }, []);
 
+  const ranking = rankingTab === 'paid' ? rankingPaid : rankingAll;
   const userRank = ranking.findIndex((p) => p._id === user?._id) + 1;
 
   const stats = [
@@ -94,7 +98,25 @@ export default function DashboardPage() {
 
         {/* Ranking sidebar */}
         <div>
-          <h2 className="text-lg font-bold text-[#d4edda] mb-4">Ranking</h2>
+          <h2 className="text-lg font-bold text-[#d4edda] mb-3">Ranking</h2>
+          <div className="flex gap-1 mb-4 bg-[#0d1a0d] p-1 rounded-xl border border-[#1e2e1e]">
+            <button
+              onClick={() => setRankingTab('paid')}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                rankingTab === 'paid' ? 'bg-[#00a651] text-white' : 'text-[#7a9b7a] hover:text-[#d4edda]'
+              }`}
+            >
+              💰 Pagantes
+            </button>
+            <button
+              onClick={() => setRankingTab('all')}
+              className={`flex-1 py-1.5 rounded-lg text-xs font-medium transition-colors ${
+                rankingTab === 'all' ? 'bg-[#00a651] text-white' : 'text-[#7a9b7a] hover:text-[#d4edda]'
+              }`}
+            >
+              🌍 Geral
+            </button>
+          </div>
           <RankingTable players={ranking.slice(0, 8)} currentUserId={user?._id} />
         </div>
       </div>
