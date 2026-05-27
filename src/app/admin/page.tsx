@@ -234,10 +234,25 @@ export default function AdminPage() {
     toast('Link de convite copiado!', 'success');
   };
 
+  const GROUP_ORDER = [
+    'Grupo A','Grupo B','Grupo C','Grupo D','Grupo E','Grupo F',
+    'Grupo G','Grupo H','Grupo I','Grupo J','Grupo K','Grupo L',
+    'Rodada de 32','Oitavas de Final','Quartas de Final','Semifinal','3º Lugar','Final',
+  ];
+  const groupRank = (g?: string) => {
+    if (!g) return 999;
+    const i = GROUP_ORDER.indexOf(g);
+    return i === -1 ? 998 : i;
+  };
+
   const now = new Date();
-  const visibleMatches = matches.filter(m =>
-    matchFilter === 'all' ? true : new Date(m.kickoff) >= new Date(now.getTime() - 24 * 60 * 60 * 1000)
-  );
+  const visibleMatches = matches
+    .filter(m => matchFilter === 'all' ? true : new Date(m.kickoff) >= new Date(now.getTime() - 24 * 60 * 60 * 1000))
+    .sort((a, b) => {
+      const gDiff = groupRank(a.group) - groupRank(b.group);
+      if (gDiff !== 0) return gDiff;
+      return new Date(a.kickoff).getTime() - new Date(b.kickoff).getTime();
+    });
 
   const TABS: { id: AdminTab; label: string }[] = [
     { id: 'overview', label: 'Visão geral' },

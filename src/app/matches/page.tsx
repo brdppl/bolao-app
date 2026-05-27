@@ -44,6 +44,21 @@ export default function MatchesPage() {
     return acc;
   }, {});
 
+  const GROUP_ORDER = [
+    'Grupo A','Grupo B','Grupo C','Grupo D','Grupo E','Grupo F',
+    'Grupo G','Grupo H','Grupo I','Grupo J','Grupo K','Grupo L',
+    'Rodada de 32','Oitavas de Final','Quartas de Final','Semifinal','3º Lugar','Final',
+  ];
+  const sortGroupKey = (a: string, b: string) => {
+    const ia = GROUP_ORDER.indexOf(a);
+    const ib = GROUP_ORDER.indexOf(b);
+    if (ia !== -1 && ib !== -1) return ia - ib;
+    if (ia !== -1) return -1;
+    if (ib !== -1) return 1;
+    return a.localeCompare(b);
+  };
+  const sortedGroups = Object.entries(grouped).sort(([a], [b]) => sortGroupKey(a, b));
+
   return (
     <AppShell>
       <div className="mb-6">
@@ -76,7 +91,7 @@ export default function MatchesPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {Object.entries(grouped).map(([group, groupMatches]) => (
+          {sortedGroups.map(([group, groupMatches]) => (
             <div key={group}>
               <h3 className="text-sm font-semibold text-[#7a9b7a] uppercase tracking-wider mb-3 flex items-center gap-2">
                 <span className="h-px flex-1 bg-[#1e2e1e]" />
