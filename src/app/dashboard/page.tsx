@@ -33,7 +33,7 @@ export default function DashboardPage() {
     { label: 'Pontos', value: user?.totalPoints ?? 0, icon: Star, color: 'text-[#f5c518]' },
     { label: 'Posição', value: userRank > 0 ? `#${userRank}` : '-', icon: Trophy, color: 'text-[#00a651]' },
     { label: 'Exatos', value: user?.exactScores ?? 0, icon: Zap, color: 'text-[#00c960]' },
-    { label: 'Palpites', value: user?.totalBets ?? 0, icon: Target, color: 'text-[#7a9b7a]' },
+    { label: 'Palpites', value: bets.length, icon: Target, color: 'text-[#7a9b7a]' },
   ];
 
   return (
