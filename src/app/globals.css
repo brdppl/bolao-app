@@ -1,26 +1,52 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Copa do Mundo Theme */
+  --color-pitch: #0d1a0d;
+  --color-surface: #111c11;
+  --color-card: #162016;
+  --color-border: #1e2e1e;
+  --color-green: #00a651;
+  --color-green-light: #00c960;
+  --color-green-dim: #006b34;
+  --color-gold: #f5c518;
+  --color-gold-dim: #c49b10;
+  --color-blue: #0057b8;
+  --color-muted: #4a6040;
+  --color-text: #d4edda;
+  --color-text-dim: #7a9b7a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: #0d1a0d;
+  --foreground: #d4edda;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #111c11;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2e1e;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #006b34;
 }
